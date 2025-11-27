@@ -1,10 +1,10 @@
+<template>
+    about
+</template>
+
 <script setup>
 
 </script>
-
-<template>
- <RouterView/>
-</template>
 
 <style scoped>
 
