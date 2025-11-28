@@ -9,7 +9,5 @@
 </script>
 
 <style scoped>
-.about-page{
-    margin-top: 200px;
-}
+
 </style>

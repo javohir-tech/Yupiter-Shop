@@ -1,6 +1,6 @@
 <template>
     <Navbar />
-    <main>
+    <main style = "margin-top: 65px;">
         <RouterView />
     </main>
 </template>

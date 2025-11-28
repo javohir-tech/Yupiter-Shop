@@ -1,30 +1,8 @@
 <template>
   <!-- Desktop & Tablet Header -->
-  <a-layout-header 
-    class="desktop-header"
-    :style="{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      zIndex: 1000,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '0 20px',
-      backgroundColor: isDark ? '#001529' : '#ffffff',
-      borderBottom: `1px solid ${isDark ? '#303030' : '#f0f0f0'}`,
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-    }"
-  >
+  <a-layout-header class="desktop-header">
     <!-- Brand Logo -->
-    <router-link to="/" :style="{ 
-      fontSize: '24px', 
-      fontWeight: 'bold',
-      color: isDark ? '#fff' : '#1890ff',
-      minWidth: '150px',
-      textDecoration: 'none'
-    }">
+    <router-link to="/" class="brand-logo">
       MyShop
     </router-link>
 
@@ -32,220 +10,103 @@
     <a-menu
       mode="horizontal"
       v-model:selectedKeys="selectedKeys"
-      :style="{ 
-        flex: 1,
-        minWidth: 0,
-        border: 'none',
-        backgroundColor: 'transparent',
-        marginLeft: '40px'
-      }"
       class="desktop-menu"
     >
       <a-menu-item key="home">
-        <router-link to="/">
+        <router-link to="/" class="menu-link">
           <HomeOutlined />
-          <span style="margin-left: 8px">Home</span>
+          <span class="menu-text">Home</span>
         </router-link>
       </a-menu-item>
       <a-menu-item key="about">
-        <router-link to="/about">
+        <router-link to="/about" class="menu-link">
           <InfoCircleOutlined />
-          <span style="margin-left: 8px">About Us</span>
+          <span class="menu-text">About Us</span>
         </router-link>
       </a-menu-item>
       <a-menu-item key="products">
-        <router-link to="/products">
+        <router-link to="/products" class="menu-link">
           <ShoppingOutlined />
-          <span style="margin-left: 8px">Products</span>
+          <span class="menu-text">Products</span>
         </router-link>
       </a-menu-item>
     </a-menu>
 
-    <!-- Search and Theme Toggle -->
-    <a-space :size="16" style="margin-left: auto">
+    <!-- Search -->
+    <a-space :size="16" class="search-space">
       <a-input-search
         placeholder="Search products..."
-        style="width: 200px"
+        class="search-input"
         @search="onSearch"
       />
-      <a-button
-        type="text"
-        @click="toggleTheme"
-        :style="{ 
-          fontSize: '18px',
-          color: isDark ? '#fff' : '#000'
-        }"
-      >
-        <template #icon>
-          <!-- <SunOutlined v-if="isDark" />
-          <MoonOutlined v-else /> -->
-        </template>
-      </a-button>
     </a-space>
   </a-layout-header>
 
   <!-- Mobile Top Header -->
-  l<a-layout-header 
-    class="mobile-header"
-    :style="{ 
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      zIndex: 1000,
-      display: 'none',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '0 16px',
-      backgroundColor: isDark ? '#001529' : '#ffffff',
-      borderBottom: `1px solid ${isDark ? '#303030' : '#f0f0f0'}`,
-      height: '56px',
-      gap: '12px'
-    }"
-  >
+  <a-layout-header class="mobile-header">
     <!-- Brand -->
-    <router-link to="/" :style="{ 
-      fontSize: '20px', 
-      fontWeight: 'bold',
-      color: isDark ? '#fff' : '#1890ff',
-      textDecoration: 'none',
-      flexShrink: 0
-    }">
+    <router-link to="/" class="mobile-brand">
       MyShop
     </router-link>
 
     <!-- Search Input -->
     <a-input-search
       placeholder="Search..."
-      :style="{ 
-        flex: 1,
-        maxWidth: '400px'
-      }"
+      class="mobile-search"
       size="small"
       @search="onSearch"
     />
-
-    <!-- Theme Toggle -->
-    <a-button
-      type="text"
-      @click="toggleTheme"
-      :style="{ 
-        color: isDark ? '#fff' : '#000',
-        flexShrink: 0
-      }"
-    >
-      <template #icon>
-        <!-- <SunOutlined v-if="isDark" />
-        <MoonOutlined v-else /> -->
-      </template>
-    </a-button>
   </a-layout-header>
 
   <!-- Mobile Bottom Navigation -->
-  <div 
-    class="mobile-bottom-nav"
-    :style="{
-      position: 'fixed',
-      bottom: '16px',
-      left: '16px',
-      right: '16px',
-      backgroundColor: isDark ? '#001529' : '#ffffff',
-      borderRadius: '30px',
-      border: `1px solid rgba(255, 255, 255, 0.55)`,
-      display: 'none',
-      zIndex: 1000,
-      boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
-    }"
-  >
-    <div class="pastki-oyna" :style="{ 
-      display: 'flex',
-      justifyContent: 'space-around',
-      alignItems: 'center',
-      height: '60px',
-      padding: '0 8px'
-    }">
+  <div class="mobile-bottom-nav">
+    <div class="pastki-oyna">
       <!-- Home Button -->
       <router-link
         to="/"
-        :style="{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100%',
-          flex: 1,
-          color: selectedKeys[0] === 'home' ? '#1890ff' : (isDark ? '#8c8c8c' : '#595959'),
-          fontWeight: selectedKeys[0] === 'home' ? '600' : '400',
-          textDecoration: 'none'
-        }"
+        class="nav-item"
+        :class="{ active: selectedKeys[0] === 'home' }"
         @click="changePage('home')"
       >
-        <HomeOutlined :style="{ fontSize: '20px', marginBottom: '4px' }" />
-        <span style="font-size: 12px">Home</span>
+        <HomeOutlined class="nav-icon" />
+        <span class="nav-label">Home</span>
       </router-link>
 
       <!-- About Us Button -->
       <router-link
         to="/about"
-        :style="{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100%',
-          flex: 1,
-          color: selectedKeys[0] === 'about' ? '#1890ff' : (isDark ? '#8c8c8c' : '#595959'),
-          fontWeight: selectedKeys[0] === 'about' ? '600' : '400',
-          textDecoration: 'none'
-        }"
+        class="nav-item"
+        :class="{ active: selectedKeys[0] === 'about' }"
         @click="changePage('about')"
       >
-        <InfoCircleOutlined :style="{ fontSize: '20px', marginBottom: '4px' }" />
-        <span style="font-size: 12px">About Us</span>
+        <InfoCircleOutlined class="nav-icon" />
+        <span class="nav-label">About Us</span>
       </router-link>
 
       <!-- Products Button -->
       <router-link
         to="/products"
-        :style="{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100%',
-          flex: 1,
-          color: selectedKeys[0] === 'products' ? '#1890ff' : (isDark ? '#8c8c8c' : '#595959'),
-          fontWeight: selectedKeys[0] === 'products' ? '600' : '400',
-          textDecoration: 'none'
-        }"
+        class="nav-item"
+        :class="{ active: selectedKeys[0] === 'products' }"
         @click="changePage('products')"
       >
-        <ShoppingOutlined :style="{ fontSize: '20px', marginBottom: '4px' }" />
-        <span style="font-size: 12px">Products</span>
+        <ShoppingOutlined class="nav-icon" />
+        <span class="nav-label">Products</span>
       </router-link>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { 
   HomeOutlined, 
   InfoCircleOutlined, 
   ShoppingOutlined,
-//   SunOutlined,
-//   MoonOutlined 
 } from '@ant-design/icons-vue';
 
-const props = defineProps({
-  isDark: {
-    type: Boolean,
-    default: false
-  }
-});
-
-const emit = defineEmits(['update:isDark', 'search']);
+const emit = defineEmits(['search']);
 
 const route = useRoute();
 const selectedKeys = ref(['home']);
@@ -261,10 +122,6 @@ watch(() => route.path, (newPath) => {
   }
 }, { immediate: true });
 
-const toggleTheme = () => {
-  emit('update:isDark', !props.isDark);
-};
-
 const changePage = (key) => {
   selectedKeys.value = [key];
 };
@@ -275,19 +132,223 @@ const onSearch = (value) => {
 </script>
 
 <style scoped>
-/* Desktop/Tablet Styles (default) */
+/* Desktop Header */
 .desktop-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+
+.brand-logo {
+  font-size: 24px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #f59e0b, #f97316 60%, #ef4444);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  min-width: 150px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.brand-logo:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2);
+}
+
+.desktop-menu {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background-color: transparent;
+  margin-left: 40px;
+}
+
+.menu-link {
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  padding: 8px 12px;
+  border-radius: 8px;
+  position: relative;
+}
+
+.menu-link:hover {
+  transform: translateY(-3px);
+}
+
+.menu-link:hover .menu-text {
+  text-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+}
+
+.menu-link:hover svg {
+  transform: scale(1.2);
+  filter: drop-shadow(0 2px 4px rgba(249, 115, 22, 0.4));
+}
+
+.menu-text {
+  /* gradient for menu text */
+  background: linear-gradient(90deg, #f59e0b, #f97316 60%, #ef4444);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+/* make active nav label use same gradient */
+.nav-item.active .nav-label {
+  background: linear-gradient(90deg, #f59e0b, #f97316 60%, #ef4444);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Ant icons are SVGs — use solid color for better visibility */
+.nav-item.active .nav-icon {
+  color: #f97316;
+}
+
+:deep(.menu-link) svg {
+  color: #f97316;
+  transition: all 0.3s ease;
+}
+
+.search-space {
+  margin-left: auto;
+}
+
+.search-input {
+  width: 200px;
+}
+
+
+
+/* Mobile Header */
 .mobile-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   display: none !important;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+  height: 56px;
+  gap: 12px;
 }
+
+.mobile-brand {
+  font-size: 20px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #f59e0b, #f97316 60%, #ef4444);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.mobile-brand:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2);
+}
+
+.mobile-search {
+  flex: 1;
+  max-width: 400px;
+}
+
+/* Mobile Bottom Navigation */
 .mobile-bottom-nav {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  border-radius: 30px;
+  border: 0.1px solid rgba(255, 255, 255, 0.55);
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   display: none !important;
   background: rgba(255, 255, 255, 0.35) !important;
   backdrop-filter: blur(12px) saturate(140%) !important;
   -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
-  border: 0.1px solid rgba(255, 255, 255, 0.55);
+}
+
+.pastki-oyna {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 60px;
+  padding: 0 8px;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  flex: 1;
+  color: #595959;
+  font-weight: 400;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 20px;
+  margin: 0 4px;
+  position: relative;
+}
+
+.nav-item:hover {
+  transform: translateY(-4px);
+}
+
+.nav-item:hover .nav-icon {
+  transform: scale(1.2) rotate(5deg);
+  filter: drop-shadow(0 4px 8px rgba(249, 115, 22, 0.4));
+}
+
+.nav-item:hover .nav-label {
+  transform: scale(1.05);
+}
+
+.nav-item:active {
+  transform: translateY(-2px);
+}
+
+.nav-item.active {
+  background: linear-gradient(90deg, #f59e0b, #f97316 60%, #ef4444);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  font-weight: 600;
+}
+
+.nav-icon {
+  font-size: 20px;
+  margin-bottom: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-label {
+  font-size: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Mobile Styles */
@@ -306,7 +367,7 @@ const onSearch = (value) => {
   }
 }
 
-/* Ant Design Menu customization */
+/* Ant Design Menu customization - Active link underline gradient */
 :deep(.ant-menu-horizontal) {
   line-height: 64px;
 }
@@ -320,5 +381,15 @@ const onSearch = (value) => {
   text-decoration: none;
   display: inline-flex;
   align-items: center;
+}
+
+:deep(.ant-menu-item-selected)::after {
+  border-bottom: 2px solid #f97316 !important;
+  background: linear-gradient(90deg, #f59e0b, #f97316 60%, #ef4444) !important;
+}
+
+:deep(.ant-menu-item:hover)::after {
+  border-bottom: 2px solid #f97316 !important;
+  background: linear-gradient(90deg, #f59e0b, #f97316 60%, #ef4444) !important;
 }
 </style>
