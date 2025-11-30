@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 // Layout
 import MainLayout from "@/Layout/mainLayout.vue";
 //Pages
-import { About, Home } from "@/Pages";
+import { About, Contacts, Home, Products } from "@/Pages";
 
 const routes = [
     {
@@ -16,6 +16,14 @@ const routes = [
             {
                 path : "about", 
                 component : About
+            }, 
+            {
+                path: "products", 
+                component : Products
+            }, 
+            {
+                path : "contacts", 
+                component: Contacts
             }
         ]
     }

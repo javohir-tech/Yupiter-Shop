@@ -15,30 +15,44 @@
       <a-menu-item key="home">
         <router-link to="/" class="menu-link">
           <HomeOutlined />
-          <span class="menu-text">Home</span>
+          <span class="menu-text">{{ language === 'uz' ? 'Bosh sahifa' : 'Главная' }}</span>
         </router-link>
       </a-menu-item>
       <a-menu-item key="about">
         <router-link to="/about" class="menu-link">
           <InfoCircleOutlined />
-          <span class="menu-text">About Us</span>
+          <span class="menu-text">{{ language === 'uz' ? 'Biz haqimizda' : 'О нас' }}</span>
         </router-link>
       </a-menu-item>
       <a-menu-item key="products">
         <router-link to="/products" class="menu-link">
           <ShoppingOutlined />
-          <span class="menu-text">Products</span>
+          <span class="menu-text">{{ language === 'uz' ? 'Mahsulotlar' : 'Продукты' }}</span>
+        </router-link>
+      </a-menu-item>
+      <a-menu-item key="contacts">
+        <router-link to="/contacts" class="menu-link">
+          <ContactsOutlined />
+          <span class="menu-text">{{ language === 'uz' ? 'Aloqa' : 'Контакты' }}</span>
         </router-link>
       </a-menu-item>
     </a-menu>
 
-    <!-- Search -->
+    <!-- Search & Language Selector -->
     <a-space :size="16" class="search-space">
       <a-input-search
-        placeholder="Search products..."
+        :placeholder="language === 'uz' ? 'Mahsulot qidirish...' : 'Поиск товаров...'"
         class="search-input"
         @search="onSearch"
       />
+      <a-select
+        v-model:value="selectedLanguage"
+        class="language-selector"
+        @change="onLanguageChange"
+      >
+        <a-select-option value="uz">O'zbekcha</a-select-option>
+        <a-select-option value="ru">Русский</a-select-option>
+      </a-select>
     </a-space>
   </a-layout-header>
 
@@ -49,13 +63,23 @@
       MyShop
     </router-link>
 
-    <!-- Search Input -->
+    <!-- Search Input & Language -->
     <a-input-search
-      placeholder="Search..."
+      :placeholder="language === 'uz' ? 'Qidirish...' : 'Поиск...'"
       class="mobile-search"
       size="small"
       @search="onSearch"
     />
+    
+    <a-select
+      v-model:value="selectedLanguage"
+      class="mobile-language"
+      size="small"
+      @change="onLanguageChange"
+    >
+      <a-select-option value="uz">UZ</a-select-option>
+      <a-select-option value="ru">RU</a-select-option>
+    </a-select>
   </a-layout-header>
 
   <!-- Mobile Bottom Navigation -->
@@ -69,7 +93,7 @@
         @click="changePage('home')"
       >
         <HomeOutlined class="nav-icon" />
-        <span class="nav-label">Home</span>
+        <span class="nav-label">{{ language === 'uz' ? 'Bosh sahifa' : 'Главная' }}</span>
       </router-link>
 
       <!-- About Us Button -->
@@ -80,7 +104,7 @@
         @click="changePage('about')"
       >
         <InfoCircleOutlined class="nav-icon" />
-        <span class="nav-label">About Us</span>
+        <span class="nav-label">{{ language === 'uz' ? 'Biz haqimizda' : 'О нас' }}</span>
       </router-link>
 
       <!-- Products Button -->
@@ -91,7 +115,18 @@
         @click="changePage('products')"
       >
         <ShoppingOutlined class="nav-icon" />
-        <span class="nav-label">Products</span>
+        <span class="nav-label">{{ language === 'uz' ? 'Mahsulotlar' : 'Продукты' }}</span>
+      </router-link>
+
+      <!-- Contacts Button -->
+      <router-link
+        to="/contacts"
+        class="nav-item"
+        :class="{ active: selectedKeys[0] === 'contacts' }"
+        @click="changePage('contacts')"
+      >
+        <ContactsOutlined class="nav-icon" />
+        <span class="nav-label">{{ language === 'uz' ? 'Aloqa' : 'Контакты' }}</span>
       </router-link>
     </div>
   </div>
@@ -104,12 +139,21 @@ import {
   HomeOutlined, 
   InfoCircleOutlined, 
   ShoppingOutlined,
+  ContactsOutlined,
 } from '@ant-design/icons-vue';
 
-const emit = defineEmits(['search']);
+const props = defineProps({
+  language: {
+    type: String,
+    default: 'uz'
+  }
+});
+
+const emit = defineEmits(['search', 'languageChange']);
 
 const route = useRoute();
 const selectedKeys = ref(['home']);
+const selectedLanguage = ref(props.language);
 
 // Watch route changes to update selected key
 watch(() => route.path, (newPath) => {
@@ -119,8 +163,15 @@ watch(() => route.path, (newPath) => {
     selectedKeys.value = ['about'];
   } else if (newPath.includes('/products')) {
     selectedKeys.value = ['products'];
+  } else if (newPath.includes('/contacts')) {
+    selectedKeys.value = ['contacts'];
   }
 }, { immediate: true });
+
+// Watch language prop changes
+watch(() => props.language, (newLang) => {
+  selectedLanguage.value = newLang;
+});
 
 const changePage = (key) => {
   selectedKeys.value = [key];
@@ -128,6 +179,10 @@ const changePage = (key) => {
 
 const onSearch = (value) => {
   emit('search', value);
+};
+
+const onLanguageChange = (value) => {
+  emit('languageChange', value);
 };
 </script>
 
@@ -177,6 +232,7 @@ const onSearch = (value) => {
 .menu-link {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   transition: all 0.3s ease;
   padding: 8px 12px;
   border-radius: 8px;
@@ -197,7 +253,6 @@ const onSearch = (value) => {
 }
 
 .menu-text {
-  /* gradient for menu text */
   background: linear-gradient(90deg, #f59e0b, #f97316 60%, #ef4444);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -205,7 +260,6 @@ const onSearch = (value) => {
   color: transparent;
 }
 
-/* make active nav label use same gradient */
 .nav-item.active .nav-label {
   background: linear-gradient(90deg, #f59e0b, #f97316 60%, #ef4444);
   -webkit-background-clip: text;
@@ -214,7 +268,6 @@ const onSearch = (value) => {
   color: transparent;
 }
 
-/* Ant icons are SVGs — use solid color for better visibility */
 .nav-item.active .nav-icon {
   color: #f97316;
 }
@@ -232,7 +285,24 @@ const onSearch = (value) => {
   width: 200px;
 }
 
+.language-selector {
+  min-width: 120px;
+}
 
+.language-selector :deep(.ant-select-selector) {
+  border-radius: 8px;
+  border-color: #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.language-selector :deep(.ant-select-selector:hover) {
+  border-color: #f97316;
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.1);
+}
+
+.language-selector :deep(.ant-select-arrow) {
+  color: #f97316;
+}
 
 /* Mobile Header */
 .mobile-header {
@@ -271,7 +341,26 @@ const onSearch = (value) => {
 
 .mobile-search {
   flex: 1;
-  max-width: 400px;
+  max-width: 250px;
+}
+
+.mobile-language {
+  min-width: 65px;
+  flex-shrink: 0;
+}
+
+.mobile-language :deep(.ant-select-selector) {
+  border-radius: 6px;
+  border-color: #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.mobile-language :deep(.ant-select-selector:hover) {
+  border-color: #f97316;
+}
+
+.mobile-language :deep(.ant-select-arrow) {
+  color: #f97316;
 }
 
 /* Mobile Bottom Navigation */
@@ -332,11 +421,6 @@ const onSearch = (value) => {
 }
 
 .nav-item.active {
-  background: linear-gradient(90deg, #f59e0b, #f97316 60%, #ef4444);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
   font-weight: 600;
 }
 
@@ -347,8 +431,9 @@ const onSearch = (value) => {
 }
 
 .nav-label {
-  font-size: 12px;
+  font-size: 11px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
 }
 
 /* Mobile Styles */
@@ -367,7 +452,7 @@ const onSearch = (value) => {
   }
 }
 
-/* Ant Design Menu customization - Active link underline gradient */
+/* Ant Design Menu customization */
 :deep(.ant-menu-horizontal) {
   line-height: 64px;
 }
@@ -392,4 +477,4 @@ const onSearch = (value) => {
   border-bottom: 2px solid #f97316 !important;
   background: linear-gradient(90deg, #f59e0b, #f97316 60%, #ef4444) !important;
 }
-</style>
+</style>  
