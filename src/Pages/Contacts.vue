@@ -214,8 +214,8 @@ const loading = ref(false);
 const successMessage = ref('');
 const errorMessage = ref('');
 
-const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN'; // Bu yerga botingizni tokenini qo'ying
-const TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID'; // Bu yerga chat ID ni qo'ying
+const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_BOT_TOKEN
+const TELEGRAM_CHAT_ID = import.meta.env.VITE_CHAT_ID
 
 const handleSubmit = async () => {
   loading.value = true;

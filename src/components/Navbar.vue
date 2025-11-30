@@ -3,7 +3,7 @@
   <a-layout-header class="desktop-header">
     <!-- Brand Logo -->
     <router-link to="/" class="brand-logo">
-      MyShop
+      Yupiter Shop
     </router-link>
 
     <!-- Desktop Navigation Links -->
@@ -40,11 +40,6 @@
 
     <!-- Search & Language Selector -->
     <a-space :size="16" class="search-space">
-      <a-input-search
-        :placeholder="langStore.lang === 'uz' ? 'Mahsulot qidirish...' : 'Поиск товаров...'"
-        class="search-input"
-        @search="onSearch"
-      />
       <a-select
         v-model:value="langStore.lang"
         class="language-selector"
@@ -60,16 +55,9 @@
   <a-layout-header class="mobile-header">
     <!-- Brand -->
     <router-link to="/" class="mobile-brand">
-      MyShop
+      Yupiter Shop
     </router-link>
 
-    <!-- Search Input & Language -->
-    <a-input-search
-      :placeholder="langStore.lang === 'uz' ? 'Qidirish...' : 'Поиск...'"
-      class="mobile-search"
-      size="small"
-      @search="onSearch"
-    />
     
     <a-select
       v-model:value="langStore.lang"
