@@ -1,14 +1,16 @@
 <template>
   <HeroSection />
   <!--tovaars-->
-  <Tovars/>
+  <Tovars />
+  <!--Why choose me-->
+  <WhyChoose />
+  <!-- footer -->
+  <Footer />
 </template>
 
 <script setup>
-import { HeroSection , Tovars} from '@/components';
+import { HeroSection, Tovars, WhyChoose, Footer } from '@/components';
 
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
