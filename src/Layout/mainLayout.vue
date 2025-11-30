@@ -1,12 +1,10 @@
 <template>
   <div id="app">
     <Navbar 
-      :language="currentLanguage"
       @search="handleSearch" 
-      @languageChange="handleLanguageChange"
     />
     
-    <router-view :language="currentLanguage" :key="currentLanguage" />
+    <router-view />
   </div>
 </template>
 
@@ -14,25 +12,11 @@
 import { ref, onMounted } from 'vue';
 import Navbar from '@/components/Navbar.vue';
 
-const currentLanguage = ref('uz');
-
-const handleLanguageChange = (lang) => {
-  currentLanguage.value = lang;
-  
-  // Save to localStorage
-  localStorage.setItem('language', lang);
-};
-
 const handleSearch = (value) => {
   console.log('Search:', value);
-  // Qidiruv logikasini bu yerda yozing
+ 
 };
 
-// Load language from localStorage on mount
-onMounted(() => {
-  const savedLanguage = localStorage.getItem('language') || 'uz';
-  currentLanguage.value = savedLanguage;
-});
 </script>
 
 <style>

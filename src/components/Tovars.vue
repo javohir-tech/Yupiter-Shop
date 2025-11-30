@@ -36,7 +36,7 @@
             <!-- Image & Discount Badge -->
             <div class="image-wrapper">
               <img
-                :alt="language === 'uz' ? product.name : product.name_ru"
+                :alt="langStore.lang === 'uz' ? product.name : product.name_ru"
                 :src="product.image"
                 class="product-image"
               />
@@ -48,20 +48,20 @@
             <!-- Product Info -->
             <div class="product-info">
               <h3 class="product-name">
-                {{ language === 'uz' ? product.name : product.name_ru }}
+                {{ langStore.lang === 'uz' ? product.name : product.name_ru }}
               </h3>
               <p class="product-description">
-                {{ language === 'uz' ? product.description : product.description_ru }}
+                {{ langStore.lang === 'uz' ? product.description : product.description_ru }}
               </p>
 
               <!-- Price Section -->
               <div class="price-section">
                 <div v-if="product.discount_price" class="price-group">
-                  <span class="original-price">{{ formatPrice(product.price) }} {{ language === 'uz' ? 'so\'m' : 'сум' }}</span>
-                  <span class="discount-price">{{ formatPrice(product.discount_price) }} {{ language === 'uz' ? 'so\'m' : 'сум' }}</span>
+                  <span class="original-price">{{ formatPrice(product.price) }} {{ langStore.lang === 'uz' ? 'so\'m' : 'сум' }}</span>
+                  <span class="discount-price">{{ formatPrice(product.discount_price) }} {{ langStore.lang === 'uz' ? 'so\'m' : 'сум' }}</span>
                 </div>
                 <div v-else class="price-group">
-                  <span class="current-price">{{ formatPrice(product.price) }} {{ language === 'uz' ? 'so\'m' : 'сум' }}</span>
+                  <span class="current-price">{{ formatPrice(product.price) }} {{ langStore.lang === 'uz' ? 'so\'m' : 'сум' }}</span>
                 </div>
               </div>
             </div>
@@ -71,7 +71,7 @@
 
       <!-- No Products Message -->
       <div v-if="categoriesWithProducts.length === 0 && !loading" class="empty-state">
-        <p>{{ language === 'uz' ? 'Hozircha mahsulotlar yo\'q' : 'Товаров пока нет' }}</p>
+        <p>{{ langStore.lang === 'uz' ? 'Hozircha mahsulotlar yo\'q' : 'Товаров пока нет' }}</p>
       </div>
     </div>
   </div>
@@ -80,13 +80,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { createClient } from '@supabase/supabase-js';
+import { lanStore } from '@/Stores/lanStore';
 
-const props = defineProps({
-  language: {
-    type: String,
-    default: 'uz'
-  }
-});
+const langStore = lanStore();
 
 // Supabase client
 const supabase = createClient(
@@ -141,7 +137,7 @@ const categoriesWithProducts = computed(() => {
       if (categoryProducts.length === 0) return null;
       
       return {
-        name: props.language === 'uz' ? category.uz : category.ru,
+        name: langStore.lang === 'uz' ? category.uz : category.ru,
         products: categoryProducts
       };
     })
@@ -244,18 +240,18 @@ onMounted(() => {
 }
 
 .product-card {
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid #f0f0f0;
+  border: none;
   cursor: pointer;
-  background-color: white;
+  background: #ffffff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 .product-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-  border-color: #f97316;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .image-wrapper {
@@ -263,7 +259,7 @@ onMounted(() => {
   width: 100%;
   height: 280px;
   overflow: hidden;
-  background-color: #f5f5f5;
+  background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
 }
 
 .product-image {
@@ -285,24 +281,26 @@ onMounted(() => {
   color: white;
   padding: 6px 12px;
   border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 13px;
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 }
 
 .product-info {
   padding: 16px;
+  background: #ffffff;
 }
 
 .product-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: #262626;
+  font-size: 15px;
+  font-weight: 500;
+  color: #1f2937;
   margin: 0 0 8px 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  line-height: 1.4;
 }
 
 .product-description {
@@ -316,37 +314,36 @@ onMounted(() => {
 }
 
 .price-section {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
+  margin-top: 12px;
+  padding-top: 0;
+  border-top: none;
 }
 
 .price-group {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .original-price {
-  font-size: 14px;
-  color: #8c8c8c;
+  font-size: 13px;
+  color: #9ca3af;
   text-decoration: line-through;
+  order: 2;
 }
 
 .discount-price {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
-  background: linear-gradient(90deg, #f59e0b, #f97316 60%, #ef4444);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
+  color: #dc2626;
+  order: 1;
 }
 
 .current-price {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
-  color: #262626;
+  color: #1f2937;
 }
 
 /* Skeleton Loading */

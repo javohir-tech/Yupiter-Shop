@@ -15,25 +15,25 @@
       <a-menu-item key="home">
         <router-link to="/" class="menu-link">
           <HomeOutlined />
-          <span class="menu-text">{{ language === 'uz' ? 'Bosh sahifa' : 'Главная' }}</span>
+          <span class="menu-text">{{ langStore.lang === 'uz' ? 'Bosh sahifa' : 'Главная' }}</span>
         </router-link>
       </a-menu-item>
       <a-menu-item key="about">
         <router-link to="/about" class="menu-link">
           <InfoCircleOutlined />
-          <span class="menu-text">{{ language === 'uz' ? 'Biz haqimizda' : 'О нас' }}</span>
+          <span class="menu-text">{{ langStore.lang === 'uz' ? 'Biz haqimizda' : 'О нас' }}</span>
         </router-link>
       </a-menu-item>
       <a-menu-item key="products">
         <router-link to="/products" class="menu-link">
           <ShoppingOutlined />
-          <span class="menu-text">{{ language === 'uz' ? 'Mahsulotlar' : 'Продукты' }}</span>
+          <span class="menu-text">{{ langStore.lang === 'uz' ? 'Mahsulotlar' : 'Продукты' }}</span>
         </router-link>
       </a-menu-item>
       <a-menu-item key="contacts">
         <router-link to="/contacts" class="menu-link">
           <ContactsOutlined />
-          <span class="menu-text">{{ language === 'uz' ? 'Aloqa' : 'Контакты' }}</span>
+          <span class="menu-text">{{ langStore.lang === 'uz' ? 'Aloqa' : 'Контакты' }}</span>
         </router-link>
       </a-menu-item>
     </a-menu>
@@ -41,14 +41,14 @@
     <!-- Search & Language Selector -->
     <a-space :size="16" class="search-space">
       <a-input-search
-        :placeholder="language === 'uz' ? 'Mahsulot qidirish...' : 'Поиск товаров...'"
+        :placeholder="langStore.lang === 'uz' ? 'Mahsulot qidirish...' : 'Поиск товаров...'"
         class="search-input"
         @search="onSearch"
       />
       <a-select
-        v-model:value="selectedLanguage"
+        v-model:value="langStore.lang"
         class="language-selector"
-        @change="onLanguageChange"
+        @change="langStore.handleChangeLang"
       >
         <a-select-option value="uz">O'zbekcha</a-select-option>
         <a-select-option value="ru">Русский</a-select-option>
@@ -65,17 +65,17 @@
 
     <!-- Search Input & Language -->
     <a-input-search
-      :placeholder="language === 'uz' ? 'Qidirish...' : 'Поиск...'"
+      :placeholder="langStore.lang === 'uz' ? 'Qidirish...' : 'Поиск...'"
       class="mobile-search"
       size="small"
       @search="onSearch"
     />
     
     <a-select
-      v-model:value="selectedLanguage"
+      v-model:value="langStore.lang"
       class="mobile-language"
       size="small"
-      @change="onLanguageChange"
+      @change="langStore.handleChangeLang"
     >
       <a-select-option value="uz">UZ</a-select-option>
       <a-select-option value="ru">RU</a-select-option>
@@ -93,7 +93,7 @@
         @click="changePage('home')"
       >
         <HomeOutlined class="nav-icon" />
-        <span class="nav-label">{{ language === 'uz' ? 'Bosh sahifa' : 'Главная' }}</span>
+        <span class="nav-label">{{ langStore.lang === 'uz' ? 'Bosh sahifa' : 'Главная' }}</span>
       </router-link>
 
       <!-- About Us Button -->
@@ -104,7 +104,7 @@
         @click="changePage('about')"
       >
         <InfoCircleOutlined class="nav-icon" />
-        <span class="nav-label">{{ language === 'uz' ? 'Biz haqimizda' : 'О нас' }}</span>
+        <span class="nav-label">{{ langStore.lang === 'uz' ? 'Biz haqimizda' : 'О нас' }}</span>
       </router-link>
 
       <!-- Products Button -->
@@ -115,7 +115,7 @@
         @click="changePage('products')"
       >
         <ShoppingOutlined class="nav-icon" />
-        <span class="nav-label">{{ language === 'uz' ? 'Mahsulotlar' : 'Продукты' }}</span>
+        <span class="nav-label">{{ langStore.lang === 'uz' ? 'Mahsulotlar' : 'Продукты' }}</span>
       </router-link>
 
       <!-- Contacts Button -->
@@ -126,7 +126,7 @@
         @click="changePage('contacts')"
       >
         <ContactsOutlined class="nav-icon" />
-        <span class="nav-label">{{ language === 'uz' ? 'Aloqa' : 'Контакты' }}</span>
+        <span class="nav-label">{{ langStore.lang === 'uz' ? 'Aloqa' : 'Контакты' }}</span>
       </router-link>
     </div>
   </div>
@@ -141,19 +141,12 @@ import {
   ShoppingOutlined,
   ContactsOutlined,
 } from '@ant-design/icons-vue';
+import { lanStore } from '@/Stores/lanStore';
 
-const props = defineProps({
-  language: {
-    type: String,
-    default: 'uz'
-  }
-});
-
-const emit = defineEmits(['search', 'languageChange']);
+const langStore = lanStore();
 
 const route = useRoute();
 const selectedKeys = ref(['home']);
-const selectedLanguage = ref(props.language);
 
 // Watch route changes to update selected key
 watch(() => route.path, (newPath) => {
@@ -168,21 +161,13 @@ watch(() => route.path, (newPath) => {
   }
 }, { immediate: true });
 
-// Watch language prop changes
-watch(() => props.language, (newLang) => {
-  selectedLanguage.value = newLang;
-});
-
 const changePage = (key) => {
   selectedKeys.value = [key];
 };
 
 const onSearch = (value) => {
-  emit('search', value);
-};
-
-const onLanguageChange = (value) => {
-  emit('languageChange', value);
+  console.log('Search:', value);
+  // Bu yerda search logikangizni amalga oshirishingiz mumkin
 };
 </script>
 
@@ -477,4 +462,4 @@ const onLanguageChange = (value) => {
   border-bottom: 2px solid #f97316 !important;
   background: linear-gradient(90deg, #f59e0b, #f97316 60%, #ef4444) !important;
 }
-</style>  
+</style>
