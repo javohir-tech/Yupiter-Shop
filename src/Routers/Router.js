@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 // Layout
 import MainLayout from "@/Layout/mainLayout.vue";
 //Pages
-import { About, Contacts, Home, ProductCategory, Products } from "@/Pages";
+import { About, Contacts, Home, ProductCategory, Products, ProductDetail } from "@/Pages";
 
 const routes = [
     {
@@ -22,9 +22,14 @@ const routes = [
                 component: Products
             },
             {
+                path: '/product/:id',
+                name: 'product-detail',
+                component: ProductDetail
+            },
+            {
                 path: '/category/:slug',
                 name: 'CategoryProducts',
-                component: ProductCategory 
+                component: ProductCategory
             },
             {
                 path: "contacts",

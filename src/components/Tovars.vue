@@ -37,7 +37,7 @@
             <div class="image-wrapper">
               <img
                 :alt="langStore.lang === 'uz' ? product.name : product.name_ru"
-                :src="product.image"
+                :src="product.main_image || product.image"
                 class="product-image"
               />
               <div v-if="product.discount_price" class="discount-badge">
@@ -79,10 +79,12 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { createClient } from '@supabase/supabase-js';
 import { lanStore } from '@/Stores/lanStore';
 
 const langStore = lanStore();
+const router = useRouter();
 
 // Supabase client
 const supabase = createClient(
@@ -166,10 +168,8 @@ const handleCardClick = async (product) => {
     console.error('Error updating seen count:', error);
   }
 
-  // Redirect to product link
-  if (product.link) {
-    window.open(product.link, '_blank');
-  }
+  // Navigate to product detail page
+  router.push(`/product/${product.id}`);
 };
 
 // Calculate discount percentage
