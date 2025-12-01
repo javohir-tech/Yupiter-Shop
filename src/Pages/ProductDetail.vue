@@ -105,33 +105,123 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Description Section - Full Width -->
-        <div class="description-section">
-            <h3>{{ langStore.lang === 'uz' ? 'Tavsif' : 'Описание' }}</h3>
-            <p>{{ langStore.lang === 'uz' ? product.description : product.description_ru }}</p>
+    <!-- Description Section - Full Width -->
+    <div class="description-section">
+        <h3>{{ langStore.lang === 'uz' ? 'Tavsif' : 'Описание' }}</h3>
+        <p>{{ langStore.lang === 'uz' ? product.description : product?.description_ru }}</p>
+    </div>
+    <div v-if="slidesImages.length > 0" class="slides-carousel-section">
+        <div class="slides-carousel-wrapper">
+
+            <!-- Main Carousel -->
+            <div class="main-carousel-container">
+                <a-carousel ref="mainCarousel" :dots="false" @afterChange="onSlideChange"
+                    @beforeChange="onBeforeChange">
+                    <div v-for="(item, index) in slidesImages" :key="item.id" class="carousel-slide">
+                        <img :src="item.image_url" :alt="item.caption || `Slide ${index + 1}`">
+                    </div>
+                </a-carousel>
+            </div>
+
+            <!-- Dots Indicator -->
+            <div class="custom-dots">
+                <span v-for="(item, index) in slidesImages" :key="`dot-${index}`"
+                    :class="['dot', { active: currentSlide === index }]" @click="goToSlide(index)"></span>
+            </div>
+
+            <!-- Caption pastda -->
+            <div class="slide-caption-bottom">
+                <p v-if="slidesImages[currentSlide]?.caption">
+                    {{ slidesImages[currentSlide].caption }}
+                </p>
+                <p v-else style="opacity: 0.5; font-style: italic;">
+                    {{ langStore.lang === 'uz' ? 'Tavsif yo\'q' : 'Нет описания' }}
+                </p>
+            </div>
+
+            <!-- Thumbnail Navigation -->
+            <div class="thumbnail-navigation">
+                <template v-if="slidesImages.length <= 5">
+                    <!-- Agar 5 ta yoki kamroq bo'lsa - oddiy grid -->
+                    <div class="thumbnail-grid">
+                        <div v-for="(item, index) in slidesImages" :key="`thumb-${item.id}`"
+                            :class="['thumbnail-item', { active: currentSlide === index }]" @click="goToSlide(index)">
+                            <img :src="item.image_url" :alt="item.caption || `Thumbnail ${index + 1}`">
+                        </div>
+                    </div>
+                </template>
+
+                <template v-else>
+                    <!-- Agar 5 tadan ko'p bo'lsa - carousel -->
+                    <a-carousel ref="thumbCarousel" :dots="false" :slides-to-show="5" :slides-to-scroll="1" arrows
+                        :responsive="thumbnailResponsive">
+                        <div v-for="(item, index) in slidesImages" :key="`thumb-${item.id}`">
+                            <div :class="['thumbnail-item', { active: currentSlide === index }]"
+                                @click="goToSlide(index)">
+                                <img :src="item.image_url" :alt="item.caption || `Thumbnail ${index + 1}`">
+                            </div>
+                        </div>
+                    </a-carousel>
+                </template>
+            </div>
         </div>
     </div>
+
+    <a-button type="primary" size="large" block class="gradient-btn" @click="orderProduct" :disabled="!product.link">
+        <ShoppingCartOutlined />
+        {{ langStore.lang === 'uz' ? 'Buyurtma berish' : 'Оформить заказ' }}
+    </a-button>
 </template>
+
 
 <script setup>
 import { supabase } from "@/supabase/supabase"
 import { message } from "ant-design-vue"
-import { computed, onMounted, ref } from "vue"
+import { computed, onMounted, ref, nextTick, watch } from "vue"
 import { useRoute } from "vue-router"
 import { lanStore } from "@/Stores/lanStore"
 import {
     EyeOutlined,
-    ShoppingCartOutlined,
-    ShoppingOutlined
+    ShoppingCartOutlined
 } from '@ant-design/icons-vue'
 
 const langStore = lanStore()
 const route = useRoute()
 const product = ref(null)
 const additionalImages = ref([])
+const slidesImages = ref([])
 const isZoomed = ref(false)
 const loading = ref(true)
+const currentSlide = ref(0)
+const mainCarousel = ref(null)
+const thumbCarousel = ref(null)
+
+// Thumbnail carousel responsive settings
+const thumbnailResponsive = [
+    {
+        breakpoint: 1024,
+        settings: {
+            slidesToShow: 4,
+            slidesToScroll: 1
+        }
+    },
+    {
+        breakpoint: 768,
+        settings: {
+            slidesToShow: 3,
+            slidesToScroll: 1
+        }
+    },
+    {
+        breakpoint: 480,
+        settings: {
+            slidesToShow: 2,
+            slidesToScroll: 1
+        }
+    }
+]
 
 const discountPercentage = computed(() => {
     if (product.value?.discount_price && product.value?.price) {
@@ -139,6 +229,26 @@ const discountPercentage = computed(() => {
     }
     return 0
 })
+
+// Thumbnail bosilganda carousel'ga o'tish
+const goToSlide = async (index) => {
+    currentSlide.value = index
+    await nextTick()
+
+    if (mainCarousel.value) {
+        mainCarousel.value.goTo(index)
+    }
+}
+
+// beforeChange - carousel o'zgarishidan oldin
+const onBeforeChange = (from, to) => {
+    currentSlide.value = to
+}
+
+// afterChange - carousel o'zgargandan keyin
+const onSlideChange = (current) => {
+    currentSlide.value = current
+}
 
 const fetchData = async () => {
     try {
@@ -174,8 +284,23 @@ const fetchImages = async () => {
     }
 }
 
+const fetchSlidesImages = async () => {
+    try {
+        const { data, error } = await supabase
+            .from('product_slides')
+            .select("*")
+            .eq('product_id', route.params.id)
+            .order('display_order', { ascending: true })
+
+        if (error) throw error
+        slidesImages.value = data || []
+    } catch (error) {
+        console.log("Fetch slidesni yuklashda hato", error)
+        slidesImages.value = []
+    }
+}
+
 const openImagePreview = (imageUrl) => {
-    // Create a temporary image element for preview
     const img = document.createElement('img')
     img.src = imageUrl
     img.click()
@@ -192,10 +317,14 @@ const orderProduct = () => {
 onMounted(() => {
     fetchData()
     fetchImages()
+    fetchSlidesImages()
 })
 </script>
 
+
+
 <style scoped>
+/* Barcha stylelar oldingi holatida qoladi */
 .product-detail-container {
     margin-top: 59px;
     padding: 20px;
@@ -284,7 +413,6 @@ onMounted(() => {
     padding: 0 16px;
 }
 
-/* Category */
 .category-wrapper {
     display: flex;
     align-items: center;
@@ -413,6 +541,170 @@ onMounted(() => {
     background: linear-gradient(90deg, #f59e0b, #f97316 60%, #ef4444);
 }
 
+/* Slides Carousel Section */
+.slides-carousel-section {
+    margin: 40px auto;
+    max-width: 1200px;
+    padding: 0 20px;
+}
+
+.slides-carousel-wrapper {
+    border-radius: 16px;
+    padding: 32px;
+}
+
+/* Main Carousel */
+.main-carousel-container {
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.carousel-slide {
+    width: 100%;
+    height: 100%;
+    background: #f5f5f5;
+}
+
+.carousel-slide img {
+    width: 100%;
+    height: 100%;
+}
+
+/* Caption pastda */
+.slide-caption-bottom {
+    padding: 20px 16px;
+    min-height: 60px;
+}
+
+.slide-caption-bottom p {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: #1f2937;
+    line-height: 1.5;
+}
+
+/* Custom Dots - yanada chiroyli */
+.custom-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #d1d5db;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.dot:hover {
+    background: #9ca3af;
+    transform: scale(1.1);
+}
+
+.dot.active {
+    background: #f59e0b;
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2);
+    transform: scale(1.2);
+}
+
+/* Thumbnail Navigation */
+.thumbnail-navigation {
+    margin-top: 20px;
+}
+
+.thumbnail-grid {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.thumbnail-item {
+    position: relative;
+    width: 80px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 3px solid #e5e7eb;
+    transition: all 0.3s;
+    flex-shrink: 0;
+}
+
+.thumbnail-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.thumbnail-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: #9ca3af;
+}
+
+.thumbnail-item.active {
+    border-color: #f59e0b;
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
+}
+
+/* Thumbnail Carousel (5+ rasmlar uchun) */
+:deep(.thumbnail-navigation .slick-slide) {
+    padding: 0 6px;
+}
+
+:deep(.thumbnail-navigation .slick-slide > div) {
+    display: flex;
+    justify-content: center;
+}
+
+:deep(.thumbnail-navigation .slick-slide .thumbnail-item) {
+    width: 80px;
+    height: 80px;
+}
+
+:deep(.thumbnail-navigation .slick-list) {
+    padding: 10px 0;
+}
+
+:deep(.thumbnail-navigation .slick-arrow) {
+    width: 32px;
+    height: 32px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    z-index: 10;
+}
+
+:deep(.thumbnail-navigation .slick-arrow:hover) {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+:deep(.thumbnail-navigation .slick-prev) {
+    left: -16px;
+}
+
+:deep(.thumbnail-navigation .slick-next) {
+    right: -16px;
+}
+
+:deep(.thumbnail-navigation .slick-prev:before),
+:deep(.thumbnail-navigation .slick-next:before) {
+    font-size: 16px;
+}
+
+/* Main Carousel - dots yashirish */
+:deep(.main-carousel-container .slick-dots) {
+    display: none !important;
+}
+
 /* Description Section */
 .description-section {
     background: white;
@@ -440,6 +732,14 @@ onMounted(() => {
     .image-section {
         position: relative;
         top: 0;
+    }
+
+    .slides-carousel-section {
+        padding: 0px;
+    }
+
+    .slides-carousel-wrapper {
+        padding: 0px;
     }
 
     .product-name {
@@ -483,6 +783,75 @@ onMounted(() => {
 
     .description-section {
         margin: 24px 12px 0px;
+    }
+}
+
+@media (max-width: 768px) {
+    .slides-carousel-wrapper {
+        padding: 20px;
+    }
+
+    .slide-caption-bottom p {
+        font-size: 16px;
+    }
+
+    .slide-caption-bottom {
+        padding: 16px 12px;
+        min-height: 50px;
+    }
+
+    .thumbnail-item,
+    :deep(.thumbnail-navigation .slick-slide .thumbnail-item) {
+        width: 60px;
+        height: 60px;
+    }
+
+    .thumbnail-grid {
+        gap: 8px;
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+    }
+
+    .dot.active {
+        transform: scale(1.15);
+    }
+}
+
+@media (max-width: 480px) {
+    .slides-carousel-section {
+        padding: 0 12px;
+        margin: 24px auto;
+    }
+
+    .slides-carousel-wrapper {
+        padding: 16px;
+    }
+
+    .slide-caption-bottom p {
+        font-size: 14px;
+    }
+
+    .slide-caption-bottom {
+        padding: 12px 8px;
+        min-height: 45px;
+    }
+
+    .thumbnail-item,
+    :deep(.thumbnail-navigation .slick-slide .thumbnail-item) {
+        width: 60px;
+        height: 80px;
+    }
+
+    .thumbnail-grid {
+        gap: 6px;
+    }
+
+    .dot {
+        width: 8px;
+        height: 8px;
     }
 }
 
