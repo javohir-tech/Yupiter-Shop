@@ -4,7 +4,7 @@
             <!-- Left Side - Images -->
             <a-col :xs="24" :lg="14">
                 <div class="image-section">
-                    <a-row :gutter="16">
+                    <a-row :gutter="16">    
                         <!-- Thumbnails - Left Side (Desktop only) -->
                         <a-col :xs="0" :lg="4">
                             <div class="thumbnails-vertical-wrapper">
@@ -235,14 +235,14 @@ const discountPercentage = computed(() => {
     return 0
 })
 
-// Watch currentImageIndex and adjust thumbnail scroll to show selected image
+/
 watch(currentImageIndex, (newIndex) => {
-    // Tanlangan rasmni doimo ko'rinadigan qilish uchun scroll pozitsiyasini to'g'rilash
+   
     if (allImages.value.length <= maxVisibleThumbnails) {
-        // Agar barcha rasmlar ko'rinsa, scroll kerak emas
+        
         thumbnailScrollIndex.value = 0
     } else {
-        // Tanlangan rasmni o'rtaga joylashtirish
+        
         const middlePosition = Math.floor(maxVisibleThumbnails / 2)
         let newScrollIndex = newIndex - middlePosition
         
@@ -355,6 +355,7 @@ onMounted(() => {
 
 .main-image-container {
     position: relative;
+    width: 100%;
     border-radius: 12px;
     overflow: hidden;
     background: #f5f5f5;

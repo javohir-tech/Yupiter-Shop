@@ -3,14 +3,15 @@
     <Navbar 
       @search="handleSearch" 
     />
-    
     <router-view />
+    <Footer/>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import Navbar from '@/components/Navbar.vue';
+import Footer from '@/components/Footer.vue';
 
 const handleSearch = (value) => {
   console.log('Search:', value);

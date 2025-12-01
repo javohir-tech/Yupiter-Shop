@@ -4,12 +4,10 @@
   <Tovars />
   <!--Why choose me-->
   <WhyChoose />
-  <!-- footer -->
-  <Footer />
 </template>
 
 <script setup>
-import { HeroSection, Tovars, WhyChoose, Footer } from '@/components';
+import { HeroSection, Tovars, WhyChoose} from '@/components';
 
 </script>
 
