@@ -134,9 +134,14 @@
 
             <!-- Caption pastda -->
             <div class="slide-caption-bottom">
-                <p v-if="slidesImages[currentSlide]?.caption">
-                    {{ slidesImages[currentSlide].caption }}
-                </p>
+                <div v-if="slidesImages[currentSlide]?.caption" style="display: flex; align-items: center; gap: 10px;">
+                    <p v-if="product">
+                        {{ capitalize(product.tovar_type) }} :
+                    </p>
+                    <p>
+                        {{ capitalize(slidesImages[currentSlide].caption ) }}
+                    </p>
+                </div>
                 <p v-else style="opacity: 0.5; font-style: italic;">
                     {{ langStore.lang === 'uz' ? 'Tavsif yo\'q' : 'Нет описания' }}
                 </p>
@@ -242,6 +247,11 @@ const goToSlide = async (index) => {
     if (mainCarousel.value) {
         mainCarousel.value.goTo(index)
     }
+}
+
+// textni birinchi harfini katta qilish
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 // beforeChange - carousel o'zgarishidan oldin
