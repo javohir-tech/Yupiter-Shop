@@ -139,7 +139,7 @@
                         {{ capitalize(product.tovar_type) }} :
                     </p>
                     <p>
-                        {{ capitalize(slidesImages[currentSlide].caption ) }}
+                        {{ capitalize(slidesImages[currentSlide].caption) }}
                     </p>
                 </div>
                 <p v-else style="opacity: 0.5; font-style: italic;">
@@ -171,16 +171,36 @@
                         </div>
                     </a-carousel>
                 </template>
+
             </div>
         </div>
     </div>
 
-    <div style="padding: 0px 32px;">
-        <a-button v-if="product" type="primary" size="large" block class="gradient-btn" @click="orderProduct"
-            :disabled="!product?.link">
-            <ShoppingCartOutlined />
-            {{ langStore.lang === 'uz' ? 'Buyurtma berish' : 'Оформить заказ' }}
-        </a-button>
+    <div v-if="product" style="margin-top: 32px; padding: 32px 24px 0px;">
+        <!-- Price Section -->
+        <div class="price-section">
+            <div class="price-box">
+                <template v-if="product.discount_price">
+                    <div class="price-row">
+                        <div class="discount-price">{{ product.discount_price.toLocaleString() }} {{
+                            langStore.lang === 'uz' ? 'сум' : 'сум' }}</div>
+                        <div class="discount-percentage">-{{ discountPercentage }}%</div>
+                    </div>
+                    <div class="original-price">{{ product.price.toLocaleString() }} {{ langStore.lang ===
+                        'uz' ? 'сум' : 'сум' }}</div>
+                </template>
+                <template v-else>
+                    <div class="current-price">{{ product.price.toLocaleString() }} {{ langStore.lang ===
+                        'uz' ? 'сум' : 'сум' }}</div>
+                </template>
+            </div>
+
+            <a-button v-if="product" type="primary" size="large" block class="gradient-btn" @click="orderProduct"
+                :disabled="!product?.link">
+                <ShoppingCartOutlined />
+                {{ langStore.lang === 'uz' ? 'Buyurtma berish' : 'Оформить заказ' }}
+            </a-button>
+        </div>
     </div>
 </template>
 
@@ -273,8 +293,18 @@ const fetchData = async () => {
             .eq('id', route.params.id)
             .single()
 
+        const newSeenCount = (data.seen || 0) + 1;
+
+        // korilganlarni bittaga ortirish 
+        const { error : seenError } = await supabase
+            .from('products')
+            .update({ seen: newSeenCount })
+            .eq('id', data.id);
+
         if (error) throw error
         product.value = data
+        
+        window.scrollTo({ top: 0, behavior: "smooth" })
     } catch (error) {
         message.error(langStore.lang === 'uz' ? 'Mahsulot topilmadi' : 'Продукт не найден')
     } finally {

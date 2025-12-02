@@ -172,7 +172,7 @@ const fetchProducts = async () => {
 // Handle card click - YAXSHILANGAN VERSIYA
 const handleCardClick = async (product) => {
   router.push(`/product/${product.id}`)
-
+  window.scrollTo({top : 0 ,  behavior: "smooth"})
   // Seen countni yangilash (background'da)
   try {
     const currentSeen = product.seen || 0;

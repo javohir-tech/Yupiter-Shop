@@ -148,28 +148,8 @@ const categoriesWithProducts = computed(() => {
 
 // Handle card click
 const handleCardClick = async (product) => {
-  // Update seen count
-  try {
-    const newSeenCount = (product.seen || 0) + 1;
-    
-    const { error } = await supabase
-      .from('products')
-      .update({ seen: newSeenCount })
-      .eq('id', product.id);
-
-    if (error) throw error;
-
-    // Update local data
-    const index = products.value.findIndex(p => p.id === product.id);
-    if (index !== -1) {
-      products.value[index].seen = newSeenCount;
-    }
-  } catch (error) {
-    console.error('Error updating seen count:', error);
-  }
-
-  // Navigate to product detail page
   router.push(`/product/${product.id}`);
+  window.scrollTo({top : 0, behavior : 'smooth'})
 };
 
 // Calculate discount percentage
