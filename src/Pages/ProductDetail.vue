@@ -108,10 +108,11 @@
     </div>
 
     <!-- Description Section - Full Width -->
-    <div class="description-section">
+    <div v-if="product" class="description-section">
         <h3>{{ langStore.lang === 'uz' ? 'Tavsif' : 'Описание' }}</h3>
-        <p>{{ langStore.lang === 'uz' ? product.description : product?.description_ru }}</p>
+        <p>{{ langStore.lang === 'uz' ? product?.description : product?.description_ru }}</p>
     </div>
+
     <div v-if="slidesImages.length > 0" class="slides-carousel-section">
         <div class="slides-carousel-wrapper">
 
@@ -169,10 +170,13 @@
         </div>
     </div>
 
-    <a-button type="primary" size="large" block class="gradient-btn" @click="orderProduct" :disabled="!product.link">
-        <ShoppingCartOutlined />
-        {{ langStore.lang === 'uz' ? 'Buyurtma berish' : 'Оформить заказ' }}
-    </a-button>
+    <div style="padding: 0px 32px;">
+        <a-button v-if="product" type="primary" size="large" block class="gradient-btn" @click="orderProduct"
+            :disabled="!product?.link">
+            <ShoppingCartOutlined />
+            {{ langStore.lang === 'uz' ? 'Buyurtma berish' : 'Оформить заказ' }}
+        </a-button>
+    </div>
 </template>
 
 
@@ -348,7 +352,7 @@ onMounted(() => {
     width: 100%;
     overflow: hidden;
     background: #f5f5f5;
-    margin-bottom: 24px;
+    height: 550px;
     aspect-ratio: 1;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
@@ -437,6 +441,7 @@ onMounted(() => {
     margin: 0 0 16px 0;
     color: #1f2937;
     line-height: 1.3;
+    padding-top: 32px;
 }
 
 /* Stats Row */
@@ -574,7 +579,7 @@ onMounted(() => {
 
 /* Caption pastda */
 .slide-caption-bottom {
-    padding: 20px 16px;
+    padding: 10px 16px;
     min-height: 60px;
 }
 
@@ -591,7 +596,7 @@ onMounted(() => {
     display: flex;
     justify-content: center;
     gap: 10px;
-    margin: 20px 0;
+    margin: 0;
 }
 
 .dot {
@@ -784,6 +789,11 @@ onMounted(() => {
     .description-section {
         margin: 24px 12px 0px;
     }
+
+    .additional-image-item:hover {
+        transform: none;
+        box-shadow: none;
+    }
 }
 
 @media (max-width: 768px) {
@@ -797,7 +807,6 @@ onMounted(() => {
 
     .slide-caption-bottom {
         padding: 16px 12px;
-        min-height: 50px;
     }
 
     .thumbnail-item,
@@ -835,8 +844,8 @@ onMounted(() => {
     }
 
     .slide-caption-bottom {
-        padding: 12px 8px;
-        min-height: 45px;
+        padding: 2px 8px;
+        min-height: 16px;
     }
 
     .thumbnail-item,
