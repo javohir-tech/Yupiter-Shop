@@ -151,6 +151,7 @@ watch(() => route.path, (newPath) => {
 
 const changePage = (key) => {
   selectedKeys.value = [key];
+  window.scrollTo({top : 0, behavior : "smooth"})
 };
 
 const onSearch = (value) => {
