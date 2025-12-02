@@ -38,19 +38,11 @@
 
       <!-- Products Grid -->
       <div v-else-if="products.length > 0" class="products-grid">
-        <div
-          v-for="product in products"
-          :key="product.id"
-          class="product-card"
-          @click="handleCardClick(product)"
-        >
+        <div v-for="product in products" :key="product.id" class="product-card" @click="handleCardClick(product)">
           <!-- Image & Discount Badge -->
           <div class="image-wrapper">
-            <img
-              :alt="langStore.lang === 'uz' ? product.name : product.name_ru"
-              :src="product.image"
-              class="product-image"
-            />
+            <img :alt="langStore.lang === 'uz' ? product.name : product.name_ru" :src="product.main_image"
+              class="product-image" />
             <div v-if="product.discount_price" class="discount-badge">
               -{{ calculateDiscount(product.price, product.discount_price) }}%
             </div>
@@ -68,11 +60,14 @@
             <!-- Price Section -->
             <div class="price-section">
               <div v-if="product.discount_price" class="price-group">
-                <span class="discount-price">{{ formatPrice(product.discount_price) }} {{ langStore.lang === 'uz' ? 'so\'m' : 'сум' }}</span>
-                <span class="original-price">{{ formatPrice(product.price) }} {{ langStore.lang === 'uz' ? 'so\'m' : 'сум' }}</span>
+                <span class="discount-price">{{ formatPrice(product.discount_price) }} {{ langStore.lang === 'uz' ?
+                  'so\'m' : 'сум' }}</span>
+                <span class="original-price">{{ formatPrice(product.price) }} {{ langStore.lang === 'uz' ? 'so\'m' :
+                  'сум' }}</span>
               </div>
               <div v-else class="price-group">
-                <span class="current-price">{{ formatPrice(product.price) }} {{ langStore.lang === 'uz' ? 'so\'m' : 'сум' }}</span>
+                <span class="current-price">{{ formatPrice(product.price) }} {{ langStore.lang === 'uz' ? 'so\'m' :
+                  'сум' }}</span>
               </div>
             </div>
           </div>
@@ -86,14 +81,14 @@
           {{ langStore.lang === 'uz' ? 'Mahsulotlar topilmadi' : 'Товары не найдены' }}
         </h3>
         <p class="empty-description">
-          {{ langStore.lang === 'uz' 
-            ? 'Bu kategoriyada hozircha mahsulotlar yo\'q' 
-            : 'В этой категории пока нет товаров' 
+          {{ langStore.lang === 'uz'
+            ? 'Bu kategoriyada hozircha mahsulotlar yo\'q'
+            : 'В этой категории пока нет товаров'
           }}
         </p>
         <router-link to="/products" class="back-button">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
+            <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
           {{ langStore.lang === 'uz' ? 'Kategoriyalarga qaytish' : 'Вернуться к категориям' }}
         </router-link>
@@ -104,12 +99,13 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { createClient } from '@supabase/supabase-js';
 import { lanStore } from '@/Stores/lanStore';
 
 const langStore = lanStore();
 const route = useRoute();
+const router = useRouter()
 
 // Supabase client
 const supabase = createClient(
@@ -175,19 +171,13 @@ const fetchProducts = async () => {
 
 // Handle card click - YAXSHILANGAN VERSIYA
 const handleCardClick = async (product) => {
-  console.log('Card bosildi, mahsulot ID:', product.id);
-  console.log('Hozirgi seen qiymati:', product.seen);
-
-  // Darhol linkni ochish (user tajribasini yaxshilash uchun)
-  if (product.link) {
-    window.open(product.link, '_blank');
-  }
+  router.push(`/product/${product.id}`)
 
   // Seen countni yangilash (background'da)
   try {
     const currentSeen = product.seen || 0;
     const newSeenCount = currentSeen + 1;
-    
+
     console.log('Yangi seen qiymati:', newSeenCount);
 
     // Supabase'ga update so'rovi
@@ -467,6 +457,7 @@ onMounted(() => {
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
