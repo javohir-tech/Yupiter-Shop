@@ -129,10 +129,10 @@
             <div class="slide-caption-bottom">
                 <div v-if="slidesImages[currentSlide]?.caption" style="display: flex; align-items: center; gap: 10px;">
                     <p v-if="product">
-                        {{ product.tovar_type }} :
+                        {{ capitalize(product.tovar_type) }} :
                     </p>
                     <p>
-                        {{ slidesImages[currentSlide].caption }}
+                        {{capitalize( slidesImages[currentSlide].caption )}}
                     </p>
                 </div>
                 <p v-else style="opacity: 0.5; font-style: italic;">
@@ -262,9 +262,11 @@ const goToSlide = async (index) => {
     }
 }
 
-// textni birinchi harfini katta qilish
-function capitalize(str) {
-    return str[0].toUpperCase() + str.slice(1)
+// katta harf
+const capitalize = (str) => {
+    if(!str) return ''
+
+    return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 // beforeChange - carousel o'zgarishidan oldin
