@@ -27,14 +27,7 @@
                 <div class="image-section">
                     <!-- Main Image -->
                     <div class="main-image-container">
-                        <a-image :src="product.main_image"
-                            :preview="{ visible: isZoomed, onVisibleChange: (vis) => isZoomed = vis }"
-                            class="main-image" />
-
-                        <!-- Discount Badge -->
-                        <a-badge v-if="discountPercentage > 0" :count="`-${discountPercentage}%`"
-                            :number-style="{ backgroundColor: '#ef4444', fontSize: '16px', fontWeight: 'bold' }"
-                            class="discount-badge" />
+                        <img :src="product.main_image" alt="">
                     </div>
                 </div>
             </a-col>
@@ -136,10 +129,10 @@
             <div class="slide-caption-bottom">
                 <div v-if="slidesImages[currentSlide]?.caption" style="display: flex; align-items: center; gap: 10px;">
                     <p v-if="product">
-                        {{ capitalize(product.tovar_type) }} :
+                        {{ product.tovar_type }} :
                     </p>
                     <p>
-                        {{ capitalize(slidesImages[currentSlide].caption) }}
+                        {{ slidesImages[currentSlide].caption }}
                     </p>
                 </div>
                 <p v-else style="opacity: 0.5; font-style: italic;">
@@ -271,7 +264,7 @@ const goToSlide = async (index) => {
 
 // textni birinchi harfini katta qilish
 function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1)
+    return str[0].toUpperCase() + str.slice(1)
 }
 
 // beforeChange - carousel o'zgarishidan oldin
@@ -296,14 +289,14 @@ const fetchData = async () => {
         const newSeenCount = (data.seen || 0) + 1;
 
         // korilganlarni bittaga ortirish 
-        const { error : seenError } = await supabase
+        const { error: seenError } = await supabase
             .from('products')
             .update({ seen: newSeenCount })
             .eq('id', data.id);
 
         if (error) throw error
         product.value = data
-        
+
         window.scrollTo({ top: 0, behavior: "smooth" })
     } catch (error) {
         message.error(langStore.lang === 'uz' ? 'Mahsulot topilmadi' : 'Продукт не найден')
@@ -370,7 +363,7 @@ onMounted(() => {
 <style scoped>
 /* Barcha stylelar oldingi holatida qoladi */
 .product-detail-container {
-    margin-top: 59px;
+    margin-top: 200px;
     padding: 20px;
     max-width: 1400px;
     margin-left: auto;
@@ -390,17 +383,17 @@ onMounted(() => {
 .main-image-container {
     position: relative;
     width: 100%;
+    min-height: 500px;
     overflow: hidden;
     background: #f5f5f5;
-    height: 550px;
     aspect-ratio: 1;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
 
-.main-image {
+.main-image-container img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
 }
 
 .discount-badge {
@@ -797,7 +790,7 @@ onMounted(() => {
     }
 
     .product-detail-container {
-        margin-top: 20px;
+        margin-top: 55px;
         padding: 12px;
     }
 
